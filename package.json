@@ -1,0 +1,21 @@
+{
+  "name": "02-2movie-app",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "parcel ./index.html",
+    "build": "parcel build ./index.html",
+    "vercel": "vercel dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "dotenv": "16.3.1",
+    "parcel": "2.9.3",
+    "vercel": "32.3.0"
+  },
+  "dependencies": {
+    "node-fetch": "2.7.0"
+  }
+}
