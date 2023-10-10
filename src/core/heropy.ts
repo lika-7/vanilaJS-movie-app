@@ -1,20 +1,37 @@
 ///// Component /////
-export class Component {
-    constructor(payload = {}) {
-      const {
-        tagName = 'div', // 최상위 요소의 태그 이름
-        props = {},
-        state = {}
-      } = payload
-      this.el = document.createElement(tagName) // 컴포넌트의 최상위 요소
-      this.props = props // 컴포넌트가 사용될 때 부모 컴포넌트에서 받는 데이터
-      this.state = state // 컴포넌트 안에서 사용할 데이터
-      this.render()
-    }
-    render() { // 컴포넌트를 렌더링하는 함수
-      // ...
-    }
+interface ComponentPaload{
+  tagName?: string//tagName,props,state는 데이터가 안들어올수도 있느이 optioanl chaning으로 초기화
+  props?: {
+    //key value 형식의 객체에 type을 지정해야 하니 인덱스 시그니처 이용
+    //key 값은 string 형식이고, 들어오는 value는 unknown 형식
+    [key: string]: unknown, 
   }
+  state?:{
+    [key:string]: unknown
+  }
+}
+
+export class Component {
+  // 클래스 안에 선언된 this 키워드의 속성들의 타입은 class body 안에 선언되어야 함
+  //명시적으로 속성의 접근 제어자를 붙여 주는게 좋음
+  public el
+  public props
+  public state
+  constructor(payload:ComponentPaload = {}) {
+    const {
+      tagName = 'div', // 최상위 요소의 태그 이름
+      props = {},
+      state = {}
+    } = payload
+    this.el = document.createElement(tagName) // 컴포넌트의 최상위 요소
+    this.props = props // 컴포넌트가 사용될 때 부모 컴포넌트에서 받는 데이터
+    this.state = state // 컴포넌트 안에서 사용할 데이터
+    this.render()
+  }
+  render() { // 컴포넌트를 렌더링하는 함수
+    // ...
+  }
+}
   
   
   ///// Router /////
