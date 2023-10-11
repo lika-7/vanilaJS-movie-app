@@ -34,43 +34,56 @@ export class Component {
 }
   
   
-  ///// Router /////
-  // 페이지 렌더링!
-  function routeRender(routes) {
-    // 접속할 때 해시 모드가 아니면(해시가 없으면) /#/로 리다이렉트!
-    if (!location.hash) {
-      history.replaceState(null, '', '/#/') // (상태, 제목, 주소)
-    }
-    const routerView = document.querySelector('router-view')
-    const [hash, queryString = ''] = location.hash.split('?') // 물음표를 기준으로 해시 정보와 쿼리스트링을 구분
-  
-    // 1) 쿼리스트링을 객체로 변환해 히스토리의 상태에 저장!
-    const query = queryString
-      .split('&')
-      .reduce((acc, cur) => {
-        const [key, value] = cur.split('=')
-        acc[key] = value
-        return acc
-      }, {})
-    history.replaceState(query, '') // (상태, 제목)
-  
-    // 2) 현재 라우트 정보를 찾아서 렌더링!
-    const currentRoute = routes.find(route => new RegExp(`${route.path}/?$`).test(hash))
+///// Router /////
+interface Route{
+  path:string
+  component: typeof Component // 이부분이 특이함 component는 클래스인데, 굳이 typeof를 이용해 명시함
+}
+type Routes = Route[]
+// 페이지 렌더링!
+function routeRender(routes:Routes) {
+  // 접속할 때 해시 모드가 아니면(해시가 없으면) /#/로 리다이렉트!
+  if (!location.hash) {
+    history.replaceState(null, '', '/#/') // (상태, 제목, 주소)
+  }
+  const routerView = document.querySelector('router-view')
+  const [hash, queryString = ''] = location.hash.split('?') // 물음표를 기준으로 해시 정보와 쿼리스트링을 구분
+
+  // 1) 쿼리스트링을 객체로 변환해 히스토리의 상태에 저장!
+  interface Query{
+    [key: string]: string
+  }
+  const query = queryString
+    .split('&')
+    .reduce((acc, cur) => {
+      const [key, value] = cur.split('=')
+      //reduce 함수의 두번째 매개변수로 {}가 들어갔는데, 빈객체 내용으로 들어가 있기에 타입스크립트가 판단하길 어떠한 내용도 들어갈 수 없다 판단함
+      //대괄호 표기법으로 인덱싱 하고 있음
+      acc[key] = value 
+      return acc
+    }, {} as Query)
+  history.replaceState(query, '') // (상태, 제목)
+
+  // 2) 현재 라우트 정보를 찾아서 렌더링!
+  const currentRoute = routes.find(route => new RegExp(`${route.path}/?$`).test(hash))
+  if(routerView){
     routerView.innerHTML = ''
-    routerView.append(new currentRoute.component().el)
+    currentRoute && routerView.append(new currentRoute.component().el)
+  }
   
-    // 3) 화면 출력 후 스크롤 위치 복구!
-    window.scrollTo(0, 0)
-  }
-  export function createRouter(routes) {
-    // 원하는(필요한) 곳에서 호출할 수 있도록 함수 데이터를 반환!
-    return function () {
-      window.addEventListener('popstate', () => {
-        routeRender(routes)
-      })
+
+  // 3) 화면 출력 후 스크롤 위치 복구!
+  window.scrollTo(0, 0)
+}
+export function createRouter(routes:Routes) {
+  // 원하는(필요한) 곳에서 호출할 수 있도록 함수 데이터를 반환!
+  return function () {
+    window.addEventListener('popstate', () => {
       routeRender(routes)
-    }
+    })
+    routeRender(routes)
   }
+}
   
   
   ///// Store /////
