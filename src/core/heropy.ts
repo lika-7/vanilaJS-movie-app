@@ -87,10 +87,24 @@ export function createRouter(routes:Routes) {
   
   
   ///// Store /////
-  export class Store {
-    constructor(state) {
-      this.state = {} // 상태(데이터)
-      this.observers = {}
+  interface StoreObservers{
+    //key는 객체 데이터의 속성, 값은 감시 해서 실행하려는 콜백 함수
+    //interface index signature 형식 이용
+    //index 이름은 key이고, 'key'라는 이름을 가진index 형식은 string으로 구성되어 있다. 
+    //이 index에 해당하는 값이 반환 하는 내용은 SubscribeCallback 형식이다.
+    [key: string]:SubscribeCallback[]
+  }
+  interface SubscribeCallback{
+    //interface 함수 형식 이용
+    //파라미터 이름은 arg이고, arg로 들어올 내용을 뭐가 될지 몰라서 unknown을 이용함
+    // 함수를 실행하는거니 반환 내용은 없음
+    (arg: unknown):void
+  }
+  export class Store <S>{
+    public state = {} as S// 상태(데이터)
+    private observers = {} as StoreObservers
+    constructor(state:S) {
+      
       for (const key in state) {
         // 각 상태에 대한 변경 감시(Setter) 설정!
         Object.defineProperty(this.state, key, {
@@ -107,7 +121,7 @@ export function createRouter(routes:Routes) {
       }
     }
     // 상태 변경 구독!
-    subscribe(key, cb) { //cb 부분으로 어떤거 넣어주는지 확인해봐야 함. 콜백으로 뭐 넣어주는지 궁금함
+    subscribe(key: string, cb: SubscribeCallback) { //key는 구독할 상태의 이름이 담겨 있고, 콜백은 상태가 바뀔 때 마다 실행하는 함수가 들어 있음
       Array.isArray(this.observers[key]) // 이미 등록된 콜백이 있는지 확인!
         ? this.observers[key].push(cb) // 있으면 새로운 콜백 밀어넣기!
         : this.observers[key] = [cb] // 없으면 콜백 배열로 할당!
