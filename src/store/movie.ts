@@ -1,6 +1,54 @@
 import { Store } from '../core/heropy'
 
-const store = new Store({
+interface SimpleMovie {
+    Title: string
+    Year: string
+    imdbID: string
+    Type: string
+    Poster: string
+  }  
+interface DetailedMovie {
+    Title: string
+    Year: string
+    Rated: string
+    Released: string
+    Runtime: string
+    Genre: string
+    Director: string
+    Writer: string
+    Actors: string
+    Plot: string
+    Language: string
+    Country: string
+    Awards: string
+    Poster: string
+    Ratings: {
+        Source: string
+        Value: string
+    }[]
+    Metascore: string
+    imdbRating: string
+    imdbVotes: string
+    imdbID: string
+    Type: string
+    DVD: string
+    BoxOffice: string
+    Production: string
+    Website: string
+    Response: string
+}
+
+  
+interface State {
+    searchText:string,
+    page: number,
+    pageMax: number,
+    movies: SimpleMovie[],
+    loading: boolean,
+    message: string,
+    movie: DetailedMovie
+}
+const store = new Store<State>({
     //영화 목록
     searchText:'',
     page: 1,
@@ -9,12 +57,11 @@ const store = new Store({
     loading: false,
     message: 'Search for the movie title!',
     //영화 상세 정보
-    movie: {}
-
+    movie: {} as DetailedMovie
 })
 
 export default store
-export const searchMovies = async page =>{
+export const searchMovies = async (page:number) =>{
     store.state.loading = true
     store.state.page= page
     if(page===1){
@@ -47,7 +94,7 @@ export const searchMovies = async page =>{
         store.state.loading = false
     }
 }
-export const getMovieDetails = async id => {
+export const getMovieDetails = async (id:string) => {
     try{
         const res = await fetch('/api/movie', {/*컴퓨팅 서버에 데이터 요청, 컴퓨팅 서버가 API키 가지고 있음*/
             method: 'POST',

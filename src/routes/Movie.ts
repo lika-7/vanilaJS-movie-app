@@ -47,8 +47,8 @@ export default class Movie extends Component {
                     <p>${movie.Director}</p>
                 </div>
                 <div>
-                    <h3>Roduction</h3>
-                    <p>${movie.Roduction}</p>
+                    <h3>Production</h3>
+                    <p>${movie.Production}</p>
                 </div>
                 <div>
                     <h3>Genre</h3>
