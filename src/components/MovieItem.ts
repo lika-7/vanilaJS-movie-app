@@ -1,7 +1,14 @@
 import { Component } from '../core/heropy'
+import { SimpleMovie } from '../store/movie'
+
+interface Props{
+    [key: string]: unknown,
+    movie:SimpleMovie
+}
 
 export default class MovieItem extends Component{
-    constructor(props){ //props로 영화 정보 받아와서 {movie}에 할당함
+    public props!: Props
+    constructor(props:Props){ //props로 영화 정보 받아와서 {movie}에 할당함
         super({
             props,
             tagName: 'a'
